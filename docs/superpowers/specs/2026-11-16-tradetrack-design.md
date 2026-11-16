@@ -18,7 +18,7 @@ FundedOS has 12 menus: Dashboard, Trading accounts (~20 fields incl. timezone, s
 
 - Vite + React (JavaScript), `react-router-dom` (HashRouter, so GitHub Pages needs no 404 rewrite)
 - Firebase Auth (Google sign-in) + Firestore with offline persistence
-- `chart.js` for the equity curve
+- `chart.js` for the equity curve, `lucide-react` for icons (design system asks for icons next to labels)
 - Vitest for `stats.js`
 - No Firebase Storage (needs paid Blaze plan): screenshots are compressed in the browser and stored inside the trade document
 
@@ -42,12 +42,12 @@ All under `users/{uid}/`. Security rules: `request.auth.uid == uid` for read and
 
 Numbers stored as numbers; empty optional fields stored as `null`. Dates stored as `YYYY-MM-DD` strings in the user's local date.
 
-Screenshot: resized to max 1600px on the long side, JPEG, quality lowered until ≤ 300 KB (Firestore doc limit is 1 MB). If it can't get under 300 KB, the form shows an error.
+Screenshot: resized to max 1600px on the long side, JPEG, quality lowered until the data URL is ≤ 400,000 characters (~300 KB image; Firestore doc limit is 1 MB). If it can't get under that, the form shows an error.
 
 ## Calculations (`src/stats.js`, pure functions, computed on read, never stored)
 
 - **Balance** = size + Σ pnl of the account's trades
-- **R** = (exit − entry) / (entry − stopLoss), sign flipped for sell. `null` if entry, exit or stopLoss missing, or entry == stopLoss
+- **R** = (exit − entry) / (entry − stopLoss), same formula for buy and sell (both signs flip together). `null` if entry, exit or stopLoss missing, or entry == stopLoss
 - **Win rate** = count(pnl > 0) / count(trades). Breakeven (pnl = 0) counts as a trade, not a win
 - **Profit factor** = Σ positive pnl / |Σ negative pnl|; `Infinity` when there are no losses, `null` when no trades
 - **Avg R** = mean of non-null R values
@@ -70,7 +70,7 @@ src/
   stats.js (+ stats.test.js)
   image.js                 screenshot compression
   theme.css                Verdana Health tokens + base styles
-  ui/                      Button, Card, Field, Modal, Chip, StatCard
+  ui.jsx                   formatters, StatCard, Modal, FormModal (config-driven forms)
   pages/                   Dashboard, Journal, Accounts, Cashflow
 ```
 
