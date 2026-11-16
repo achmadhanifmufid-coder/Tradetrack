@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { BookOpen, LayoutDashboard, LogIn, LogOut, Wallet, WalletCards } from 'lucide-react';
-import { auth, login, logout } from './firebase';
+import { auth, login, logout, redirectResult } from './firebase';
 import { DataContext, useCollection } from './data';
 import Dashboard from './pages/Dashboard';
 import Journal from './pages/Journal';
@@ -25,6 +25,9 @@ export default function App() {
 
 function SignIn() {
   const [error, setError] = useState('');
+  useEffect(() => {
+    redirectResult().catch(e => setError(e.message));
+  }, []);
   return (
     <div className="center">
       <div className="card" style={{ maxWidth: 360 }}>

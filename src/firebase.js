@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getAuth, getRedirectResult, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from 'firebase/auth';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -16,5 +16,8 @@ export const auth = getAuth(app);
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 });
-export const login = () => signInWithPopup(auth, new GoogleAuthProvider());
+// Redirect needs the app on the same domain as authDomain (Firebase Hosting); localhost has no auth handler, so dev uses a popup.
+export const login = () =>
+  (location.hostname === 'localhost' ? signInWithPopup : signInWithRedirect)(auth, new GoogleAuthProvider());
+export const redirectResult = () => getRedirectResult(auth);
 export const logout = () => signOut(auth);
