@@ -12,5 +12,5 @@ export async function compressImage(file) {
     const url = canvas.toDataURL('image/jpeg', q);
     if (url.length <= MAX_CHARS) return url;
   }
-  throw new Error('Gambar terlalu besar. Crop dulu lalu coba lagi.');
+  throw new Error('imageTooBig'); // i18n key, translated by the caller
 }

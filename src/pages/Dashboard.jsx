@@ -4,11 +4,13 @@ import { useData } from '../data';
 import {
   avgR, balance, dailyLossRemaining, equityCurve, healthTone, localDate, maxLossFloor, netResult, profitFactor, winRate,
 } from '../stats';
+import { useT } from '../i18n';
 import { StatCard, accountOptions, money, pct, rFmt, ratio, tone } from '../ui';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip);
 
 function EquityChart({ points }) {
+  const t = useT();
   const ref = useRef(null);
   useEffect(() => {
     const chart = new Chart(ref.current, {
@@ -35,12 +37,13 @@ function EquityChart({ points }) {
   }, [points]);
   return (
     <div className="chart">
-      <canvas ref={ref} role="img" aria-label="Kurva ekuitas: P/L kumulatif" />
+      <canvas ref={ref} role="img" aria-label={t('dash.equityAria')} />
     </div>
   );
 }
 
 function Limit({ label, remaining, limit }) {
+  const t = useT();
   const used = Math.max(0, limit - remaining);
   return (
     <div className="health">
@@ -48,27 +51,29 @@ function Limit({ label, remaining, limit }) {
       <div className="bar" role="meter" aria-label={label} aria-valuemin={0} aria-valuemax={limit} aria-valuenow={used}>
         <div className={healthTone(used, limit)} style={{ width: `${Math.min(100, (used / limit) * 100)}%` }} />
       </div>
-      <p className="stat-sub">Sisa <span className="mono">{money(remaining)}</span> dari {money(limit)}</p>
+      <p className="stat-sub">{t('dash.left')} <span className="mono">{money(remaining)}</span> {t('dash.of')} {money(limit)}</p>
     </div>
   );
 }
 
 function Health({ account, trades }) {
+  const t = useT();
   const bal = balance(account, trades);
   const daily = dailyLossRemaining(account, trades, localDate());
   const floor = maxLossFloor(account, trades);
   return (
     <div className="card">
       <h3>{account.firm} · {account.accountNo}</h3>
-      <p className="stat-sub">Saldo <span className="mono">{money(bal)}</span></p>
-      {daily != null && <Limit label="Batas rugi harian" remaining={daily} limit={account.dailyLossLimit} />}
-      {floor != null && <Limit label="Batas rugi maksimum" remaining={bal - floor} limit={account.maxLossLimit} />}
-      {daily == null && floor == null && <p className="stat-sub">Isi batas rugi di halaman Akun untuk memantau risiko.</p>}
+      <p className="stat-sub">{t('accounts.balance')} <span className="mono">{money(bal)}</span></p>
+      {daily != null && <Limit label={t('dash.daily')} remaining={daily} limit={account.dailyLossLimit} />}
+      {floor != null && <Limit label={t('dash.max')} remaining={bal - floor} limit={account.maxLossLimit} />}
+      {daily == null && floor == null && <p className="stat-sub">{t('dash.setLimits')}</p>}
     </div>
   );
 }
 
 export default function Dashboard() {
+  const t = useT();
   const { accounts, trades, cashflows } = useData();
   const [accountId, setAccountId] = useState('');
   const [period, setPeriod] = useState('month');
@@ -84,38 +89,38 @@ export default function Dashboard() {
     <>
       <div className="page-head">
         <div>
-          <h1>Dasbor</h1>
-          <p className="sub">Ringkasan performa dan risiko akun.</p>
+          <h1>{t('nav.dashboard')}</h1>
+          <p className="sub">{t('dash.sub')}</p>
         </div>
         <div className="filters" style={{ margin: 0 }}>
-          <select aria-label="Filter akun" value={accountId} onChange={e => setAccountId(e.target.value)}>
-            <option value="">Semua akun</option>
+          <select aria-label={t('filterAccount')} value={accountId} onChange={e => setAccountId(e.target.value)}>
+            <option value="">{t('allAccounts')}</option>
             {accountOptions(accounts).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
-          <select aria-label="Periode" value={period} onChange={e => setPeriod(e.target.value)}>
-            <option value="month">Bulan ini</option>
-            <option value="all">Seluruh waktu</option>
+          <select aria-label={t('dash.period')} value={period} onChange={e => setPeriod(e.target.value)}>
+            <option value="month">{t('dash.month')}</option>
+            <option value="all">{t('dash.all')}</option>
           </select>
         </div>
       </div>
       <div className="grid">
-        <StatCard label="P/L" value={money(total, true)} className={tone(total)} sub={`${scoped.length} trade`} />
-        <StatCard label="Win rate" value={pct(winRate(scoped))} />
-        <StatCard label="Profit factor" value={ratio(profitFactor(scoped))} />
-        <StatCard label="R rata-rata" value={rFmt(avgR(scoped))} />
-        <StatCard label="Hasil bersih" value={money(net.net, true)} className={tone(net.net)} sub="payout − biaya" />
+        <StatCard label="P/L" value={money(total, true)} className={tone(total)} sub={t('tradeCount', { n: scoped.length })} />
+        <StatCard label={t('dash.winRate')} value={pct(winRate(scoped))} />
+        <StatCard label={t('dash.pf')} value={ratio(profitFactor(scoped))} />
+        <StatCard label={t('dash.avgR')} value={rFmt(avgR(scoped))} />
+        <StatCard label={t('net')} value={money(net.net, true)} className={tone(net.net)} sub={t('netSub')} />
       </div>
       <div className="card">
-        <div className="stat-label">Kurva ekuitas</div>
-        {points.length ? <EquityChart points={points} /> : <p className="empty">Belum ada trade di periode ini.</p>}
+        <div className="stat-label">{t('dash.equity')}</div>
+        {points.length ? <EquityChart points={points} /> : <p className="empty">{t('dash.noTrades')}</p>}
       </div>
-      <h2>Kesehatan akun</h2>
+      <h2>{t('dash.health')}</h2>
       {active.length ? (
         <div className="grid">
           {active.map(a => <Health key={a.id} account={a} trades={trades} />)}
         </div>
       ) : (
-        <p className="sub">Tidak ada akun aktif (Evaluasi atau Funded).</p>
+        <p className="sub">{t('dash.noActive')}</p>
       )}
     </>
   );

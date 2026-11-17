@@ -44,7 +44,10 @@ a { color: var(--sage); }
 .nav a, .nav .logout { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--r); color: var(--text-2); text-decoration: none; font-weight: 500; font-size: 14px; }
 .nav a:hover { background: var(--divider); }
 .nav a.active { background: var(--navy); color: #FFFFFF; }
-.nav .logout { margin-top: auto; height: auto; justify-content: flex-start; }
+.nav .logout { height: auto; justify-content: flex-start; }
+.lang { margin-top: auto; display: flex; gap: 4px; padding: 0 12px 8px; }
+.lang button { padding: 4px 10px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--surface); color: var(--text-2); font-size: 12px; font-weight: 500; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #FFFFFF; }
 .main { padding: 32px; width: 100%; min-width: 0; }
 .page-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
 .sub { color: var(--slate); font-size: 14px; margin: 4px 0 0; }
@@ -99,6 +102,11 @@ tr.clickable:hover { background: var(--bg); }
 .form-grid .wide { grid-column: 1 / -1; }
 .form-error { color: var(--error-text); font-size: 12px; margin: 16px 0 0; }
 .image-input { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.url-input { display: flex; align-items: center; gap: 8px; }
+.url-input input { flex: 1; min-width: 0; }
+.url-input a, .links a { font-size: 12px; font-weight: 500; white-space: nowrap; }
+.links { display: inline-flex; gap: 8px; margin-left: 8px; }
+.summary { font-size: 14px; color: var(--text-2); margin: 0 0 8px; }
 .image-input img { max-width: 100%; max-height: 320px; border-radius: var(--r); border: 1px solid var(--border); }
 
 /* modal */
@@ -121,6 +129,8 @@ tr.clickable:hover { background: var(--bg); }
   .layout { grid-template-columns: 1fr; }
   .nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; height: auto; z-index: 5; flex-direction: row; justify-content: space-around; padding: 6px 4px; border-right: none; border-top: 1px solid var(--border); }
   .brand { display: none; }
+  .lang { margin: 0; flex-direction: column; justify-content: center; padding: 0 2px; }
+  .lang button { padding: 2px 6px; font-size: 11px; }
   .nav a, .nav .logout { flex: 1; flex-direction: column; gap: 2px; padding: 6px 2px; margin: 0; font-size: 11px; line-height: 1.2; text-align: center; justify-content: center; }
   .main { padding: 16px 16px 96px; }
   .form-grid { grid-template-columns: 1fr; }
