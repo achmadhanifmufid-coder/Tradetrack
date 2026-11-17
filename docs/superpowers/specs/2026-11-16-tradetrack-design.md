@@ -1,7 +1,7 @@
 # TradeTrack — Design Spec
 
 Date: 2026-11-16
-Status: approved in brainstorming, pending spec review
+Status: implemented. Updated 2026-11-17: hosting moved from GitHub Pages to Firebase Hosting.
 
 ## Goal
 
@@ -16,7 +16,7 @@ FundedOS has 12 menus: Dashboard, Trading accounts (~20 fields incl. timezone, s
 
 ## Stack
 
-- Vite + React (JavaScript), `react-router-dom` (HashRouter, so GitHub Pages needs no 404 rewrite)
+- Vite + React (JavaScript), `react-router-dom` (HashRouter, so static hosting needs no SPA rewrite)
 - Firebase Auth (Google sign-in) + Firestore with offline persistence
 - `chart.js` for the equity curve, `lucide-react` for icons (design system asks for icons next to labels)
 - Vitest for `stats.js`
@@ -88,8 +88,10 @@ src/
 
 ## Deploy
 
-- GitHub Actions workflow: on push to `main`, `npm ci && npm run build`, publish `dist/` to GitHub Pages.
-- Vite `base: '/Tradetrack/'`. URL: `https://achmadhanifmufid-coder.github.io/Tradetrack/`
+- Firebase Hosting, URL `https://tradetrack-3cdb8.firebaseapp.com`. Config: `firebase.json` (public `dist`), `.firebaserc` (project `tradetrack-3cdb8`).
+- GitHub Actions `.github/workflows/deploy.yml`: on push to `main`, `npm ci`, `npm test`, `npm run build`, then `FirebaseExtended/action-hosting-deploy` to the live channel using secret `FIREBASE_SERVICE_ACCOUNT_TRADETRACK_3CDB8`.
+- Vite `base` is `/` (default).
+- Login uses `signInWithRedirect`, because the user's Chrome blocks popups. Redirect only works when the app is served from the Firebase `authDomain`, which is why hosting moved off GitHub Pages. `localhost` has no auth handler, so dev keeps `signInWithPopup`.
 - Firebase web config lives in `src/firebase.js` (it is public by design; security comes from Firestore rules).
 - Firestore rules kept in `firestore.rules` in the repo; user pastes them into the Firebase console.
 - Commit and push after each completed implementation step.
@@ -99,5 +101,4 @@ src/
 1. Create a Firebase project, add a Web app, copy its config.
 2. Enable Authentication → Google.
 3. Create a Firestore database, paste `firestore.rules`.
-4. Add `achmadhanifmufid-coder.github.io` to Authentication → Authorized domains.
-5. GitHub repo → Settings → Pages → Source: GitHub Actions.
+4. `npx firebase-tools login`, then `npx firebase-tools init hosting:github` to upload the deploy service-account secret to the repo (delete the workflow files it generates; `deploy.yml` already deploys).

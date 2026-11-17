@@ -4,6 +4,8 @@
 
 **Goal:** A personal prop-firm trading journal (accounts + risk limits, trades + stats, payouts + costs) deployed to GitHub Pages.
 
+> **Update 2026-11-17:** this plan is fully executed. Hosting later moved to Firebase Hosting (`https://tradetrack-3cdb8.firebaseapp.com`, Vite base `/`, redirect login). The GitHub Pages steps below are historical; see the spec's Deploy section for the current setup.
+
 **Architecture:** Single-page React app built with Vite. Firebase Auth (Google) gates the app; three Firestore collections under `users/{uid}/` are loaded once with realtime listeners and shared through a React context. All statistics are pure functions in `src/stats.js`, computed on render and unit-tested with Vitest.
 
 **Tech Stack:** Vite, React, react-router-dom (HashRouter), Firebase JS SDK (auth + firestore), chart.js, lucide-react, Vitest.

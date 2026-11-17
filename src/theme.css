@@ -45,7 +45,7 @@ a { color: var(--sage); }
 .nav a:hover { background: var(--divider); }
 .nav a.active { background: var(--navy); color: #FFFFFF; }
 .nav .logout { margin-top: auto; height: auto; justify-content: flex-start; }
-.main { padding: 32px; max-width: 1200px; width: 100%; min-width: 0; }
+.main { padding: 32px; width: 100%; min-width: 0; }
 .page-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
 .sub { color: var(--slate); font-size: 14px; margin: 4px 0 0; }
 .center { min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 16px; }
